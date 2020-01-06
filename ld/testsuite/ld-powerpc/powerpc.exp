@@ -443,3 +443,5 @@ run_dump_test "vle-multiseg-6"
 
 run_dump_test "ppc476-shared"
 run_dump_test "ppc476-shared2"
+
+run_dump_test "non-contiguous-powerpc"
