@@ -1,0 +1,22 @@
+language: c
+dist: focal
+sudo: required
+before_install:
+ - sudo apt-get update -qq
+ - sudo apt-get install -qq make gcc
+
+env:
+  matrix:
+  - TARGET=aarch64-linux-gnu
+  - TARGET=aarch64-none-elf
+  - TARGET=arm-linux-gnueabi
+  - TARGET=arm-linux-gnueabihf
+  - TARGET=arm-none-eabi
+
+script: mkdir -p build && cd build && ../configure --target $TARGET --enable-plugins --disable-gprof --disable-gdb --disable-gdbserver --disable-sim --disable-libdecnumber --disable-readline && make all && make check && egrep '^FAIL:|^XPASS:' `find . -name "*.sum"`
+
+notifications:
+  email:
+    on_success: always
+    recipients:
+      - christophelyon@gmail.com
