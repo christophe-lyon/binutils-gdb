@@ -8,5 +8,7 @@ cd build
 make all
 make check
 sums=`find . -name "*.sum"`
+# Show the end of the results
+[ x"$sums" != x ] && tail $sums
 # Exit with an error if FAIL or XPASS was found
-egrep '^FAIL:|^XPASS:' $sums && false
+[ x"$sums" != x ] && egrep '^FAIL:|^XPASS:' $sums && false
