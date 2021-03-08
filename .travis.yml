@@ -13,7 +13,7 @@ env:
   - TARGET=arm-linux-gnueabihf
   - TARGET=arm-none-eabi
 
-script: mkdir -p build && cd build && ../configure --target $TARGET --enable-plugins --disable-gprof --disable-gdb --disable-gdbserver --disable-sim --disable-libdecnumber --disable-readline && make all && make check && egrep '^FAIL:|^XPASS:' `find . -name "*.sum"`
+script: ./travis.sh
 
 notifications:
   email:
