@@ -35,5 +35,7 @@ create_feature_arm_arm_m_profile_with_fpa (struct target_desc *result, long regn
   tdesc_create_reg (feature, "", regnum++, 1, NULL, 96, "arm_fpa_ext");
   tdesc_create_reg (feature, "", regnum++, 1, NULL, 32, "int");
   tdesc_create_reg (feature, "xpsr", regnum++, 1, NULL, 32, "int");
+  tdesc_create_reg (feature, "msp", regnum++, 1, NULL, 32, "data_ptr");
+  tdesc_create_reg (feature, "psp", regnum++, 1, NULL, 32, "data_ptr");
   return regnum;
 }

@@ -49,6 +49,8 @@ enum gdb_regnum {
   ARM_D0_REGNUM,		/* VFP double-precision registers.  */
   ARM_D31_REGNUM = ARM_D0_REGNUM + 31,
   ARM_FPSCR_REGNUM,
+  ARM_MSP_REGNUM,		/* Cortex-M Main Stack Pointer.  */
+  ARM_PSP_REGNUM,		/* Cortex-M Process Stack Pointer.  */
 
   /* Other useful registers.  */
   ARM_FP_REGNUM = 11,		/* Frame register in ARM code, if used.  */
@@ -65,8 +67,8 @@ enum arm_register_counts {
   ARM_NUM_ARG_REGS = 4,
   /* Number of floating point argument registers.  */
   ARM_NUM_FP_ARG_REGS = 4,
-  /* Number of registers (old, defined as ARM_FPSCR_REGNUM + 1.  */
-  ARM_NUM_REGS = ARM_FPSCR_REGNUM + 1
+  /* Number of registers (old, defined as ARM_PSP_REGNUM + 1.  */
+  ARM_NUM_REGS = ARM_PSP_REGNUM + 1
 };
 
 /* Enum describing the different kinds of breakpoints.  */

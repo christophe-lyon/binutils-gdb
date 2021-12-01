@@ -27,5 +27,7 @@ create_feature_arm_arm_m_profile (struct target_desc *result, long regnum)
   tdesc_create_reg (feature, "pc", regnum++, 1, NULL, 32, "code_ptr");
   regnum = 25;
   tdesc_create_reg (feature, "xpsr", regnum++, 1, NULL, 32, "int");
+  tdesc_create_reg (feature, "msp", regnum++, 1, NULL, 32, "data_ptr");
+  tdesc_create_reg (feature, "psp", regnum++, 1, NULL, 32, "data_ptr");
   return regnum;
 }

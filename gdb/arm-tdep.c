@@ -3012,7 +3012,6 @@ arm_m_exception_cache (struct frame_info *this_frame)
   enum bfd_endian byte_order = gdbarch_byte_order (gdbarch);
   struct arm_prologue_cache *cache;
   CORE_ADDR lr;
-  CORE_ADDR sp;
   CORE_ADDR unwound_sp;
   LONGEST xpsr;
   uint32_t exc_return;
@@ -3028,7 +3027,6 @@ arm_m_exception_cache (struct frame_info *this_frame)
      to the exception and if FPU is used (causing extended stack frame).  */
 
   lr = get_frame_register_unsigned (this_frame, ARM_LR_REGNUM);
-  sp = get_frame_register_unsigned (this_frame, ARM_SP_REGNUM);
 
   /* Check EXC_RETURN indicator bits.  */
   exc_return = (((lr >> 28) & 0xf) == 0xf);
@@ -3037,37 +3035,13 @@ arm_m_exception_cache (struct frame_info *this_frame)
   process_stack_used = ((lr & (1 << 2)) != 0);
   if (exc_return && process_stack_used)
     {
-      /* Thread (process) stack used.
-	 Potentially this could be other register defined by target, but PSP
-	 can be considered a standard name for the "Process Stack Pointer".
-	 To be fully aware of system registers like MSP and PSP, these could
-	 be added to a separate XML arm-m-system-profile that is valid for
-	 ARMv6-M and ARMv7-M architectures. Also to be able to debug eg a
-	 corefile off-line, then these registers must be defined by GDB,
-	 and also be included in the corefile regsets.  */
-
-      int psp_regnum = user_reg_map_name_to_regnum (gdbarch, "psp", -1);
-      if (psp_regnum == -1)
-	{
-	  /* Thread (process) stack could not be fetched,
-	     give warning and exit.  */
-
-	  warning (_("no PSP thread stack unwinding supported."));
-
-	  /* Terminate any further stack unwinding by refer to self.  */
-	  cache->prev_sp = sp;
-	  return cache;
-	}
-      else
-	{
-	  /* Thread (process) stack used, use PSP as SP.  */
-	  unwound_sp = get_frame_register_unsigned (this_frame, psp_regnum);
-	}
+      /* Thread (process) stack used, use PSP as SP.  */
+      unwound_sp = get_frame_register_unsigned (this_frame, ARM_PSP_REGNUM);
     }
   else
     {
       /* Main stack used, use MSP as SP.  */
-      unwound_sp = sp;
+      unwound_sp = get_frame_register_unsigned (this_frame, ARM_MSP_REGNUM);
     }
 
   /* The hardware saves eight 32-bit words, comprising xPSR,
@@ -9295,6 +9269,19 @@ arm_gdbarch_init (struct gdbarch_info info, struct gdbarch_list *arches)
 
       if (!valid_p)
 	return NULL;
+
+      if (is_m)
+	{
+	  feature = tdesc_find_feature (tdesc,
+					"org.gnu.gdb.arm.m-system");
+	  if (feature != NULL)
+	    {
+	      valid_p &= tdesc_numbered_register (feature, tdesc_data.get (),
+						  ARM_MSP_REGNUM, "msp");
+	      valid_p &= tdesc_numbered_register (feature, tdesc_data.get (),
+						  ARM_PSP_REGNUM, "psp");
+	    }
+	}
 
       feature = tdesc_find_feature (tdesc,
 				    "org.gnu.gdb.arm.fpa");
