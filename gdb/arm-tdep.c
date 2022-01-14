@@ -290,6 +290,23 @@ struct arm_prologue_cache
   trad_frame_saved_reg *saved_regs;
 };
 
+static void
+arm_cache_init (struct arm_prologue_cache *cache, struct gdbarch *gdbarch)
+{
+  cache->framesize = 0;
+  cache->framereg = 0;
+  cache->saved_regs = trad_frame_alloc_saved_regs (gdbarch);
+}
+
+static void
+arm_cache_init (struct arm_prologue_cache *cache, struct frame_info *frame)
+{
+  struct gdbarch *gdbarch = get_frame_arch (frame);
+  cache->prev_sp = get_frame_register_unsigned (frame, ARM_SP_REGNUM);
+
+  arm_cache_init (cache, gdbarch);
+}
+
 namespace {
 
 /* Abstract class to read ARM instructions from memory.  */
@@ -1922,7 +1939,7 @@ arm_make_prologue_cache (struct frame_info *this_frame)
   CORE_ADDR unwound_fp;
 
   cache = FRAME_OBSTACK_ZALLOC (struct arm_prologue_cache);
-  cache->saved_regs = trad_frame_alloc_saved_regs (this_frame);
+  arm_cache_init (cache, this_frame);
 
   arm_scan_prologue (this_frame, cache);
 
@@ -2388,7 +2405,7 @@ arm_exidx_fill_cache (struct frame_info *this_frame, gdb_byte *entry)
 
   struct arm_prologue_cache *cache;
   cache = FRAME_OBSTACK_ZALLOC (struct arm_prologue_cache);
-  cache->saved_regs = trad_frame_alloc_saved_regs (this_frame);
+  arm_cache_init (cache, this_frame);
 
   for (;;)
     {
@@ -2782,7 +2799,7 @@ arm_make_epilogue_frame_cache (struct frame_info *this_frame)
   int reg;
 
   cache = FRAME_OBSTACK_ZALLOC (struct arm_prologue_cache);
-  cache->saved_regs = trad_frame_alloc_saved_regs (this_frame);
+  arm_cache_init (cache, this_frame);
 
   /* Still rely on the offset calculated from prologue.  */
   arm_scan_prologue (this_frame, cache);
@@ -2943,7 +2960,7 @@ arm_make_stub_cache (struct frame_info *this_frame)
   struct arm_prologue_cache *cache;
 
   cache = FRAME_OBSTACK_ZALLOC (struct arm_prologue_cache);
-  cache->saved_regs = trad_frame_alloc_saved_regs (this_frame);
+  arm_cache_init (cache, this_frame);
 
   cache->prev_sp = get_frame_register_unsigned (this_frame, ARM_SP_REGNUM);
 
@@ -3020,7 +3037,7 @@ arm_m_exception_cache (struct frame_info *this_frame)
   uint32_t secure_stack_used;
 
   cache = FRAME_OBSTACK_ZALLOC (struct arm_prologue_cache);
-  cache->saved_regs = trad_frame_alloc_saved_regs (this_frame);
+  arm_cache_init (cache, this_frame);
 
   /* ARMv7-M Architecture Reference "B1.5.6 Exception entry behavior"
      describes which bits in LR that define which stack was used prior
@@ -13572,7 +13589,7 @@ arm_analyze_prologue_test ()
 
       test_arm_instruction_reader mem_reader (insns);
       arm_prologue_cache cache;
-      cache.saved_regs = trad_frame_alloc_saved_regs (gdbarch);
+      arm_cache_init (&cache, gdbarch);
 
       arm_analyze_prologue (gdbarch, 0, sizeof (insns) - 1, &cache, mem_reader);
     }
