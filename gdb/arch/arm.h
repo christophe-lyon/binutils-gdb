@@ -52,6 +52,11 @@ enum gdb_regnum {
   ARM_MSP_REGNUM,		/* Cortex-M Main Stack Pointer.  */
   ARM_PSP_REGNUM,		/* Cortex-M Process Stack Pointer.  */
 
+  ARM_MSP_S_REGNUM,		/* Cortex-M Secure Main Stack Pointer.  */
+  ARM_MSP_NS_REGNUM,		/* Cortex-M Non-secure Main Stack Pointer.  */
+  ARM_PSP_S_REGNUM,		/* Cortex-M Secure Process Stack Pointer.  */
+  ARM_PSP_NS_REGNUM,		/* Cortex-M Non-secure Process Stack Pointer.  */
+
   /* Other useful registers.  */
   ARM_FP_REGNUM = 11,		/* Frame register in ARM code, if used.  */
   THUMB_FP_REGNUM = 7,		/* Frame register in Thumb code, if used.  */
@@ -67,8 +72,8 @@ enum arm_register_counts {
   ARM_NUM_ARG_REGS = 4,
   /* Number of floating point argument registers.  */
   ARM_NUM_FP_ARG_REGS = 4,
-  /* Number of registers (old, defined as ARM_PSP_REGNUM + 1.  */
-  ARM_NUM_REGS = ARM_PSP_REGNUM + 1
+  /* Number of registers (old, defined as ARM_PSP_NS_REGNUM + 1.  */
+  ARM_NUM_REGS = ARM_PSP_NS_REGNUM + 1
 };
 
 /* Enum describing the different kinds of breakpoints.  */
