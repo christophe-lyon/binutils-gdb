@@ -120,6 +120,7 @@ struct arm_gdbarch_tdep : gdbarch_tdep
   int mve_pseudo_count = 0;	/* Total number of MVE pseudo registers.  */
 
   bool is_m = false;		/* Does the target follow the "M" profile.  */
+  bool have_sec_ext = false;	/* Do we have secure extensions?  */
   CORE_ADDR lowest_pc = 0;	/* Lowest address at which instructions
 				   will appear.  */
 
